@@ -7,7 +7,14 @@ body {
     font-size: large;
     width: 60%;
 }
+
 .newlisting{
     padding: 30px 50px;
 
+}
+
+.messages{
+    font-size: large;
+    padding: 10px;
+    padding-left: 0vh;
 }

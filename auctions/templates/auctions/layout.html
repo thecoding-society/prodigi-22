@@ -38,6 +38,11 @@
             {% endif %}
         </ul>
         <hr>
+        <div class= 'messages'>
+            {% for message in messages %}
+                {{message}}
+            {% endfor %}
+        </div>
         {% block body %}
         {% endblock %}
     </body>

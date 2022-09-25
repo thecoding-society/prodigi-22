@@ -4,9 +4,11 @@
 
     <h2>New Item Listing</h2>
 
-    {% if message %}
-        <div>{{ message }}</div>
-    {% endif %}
+    <div class= 'messages'>
+        {% for message in messages %}
+            {{message}}
+        {% endfor %}
+    </div>
 
     <form action="{% url 'newlisting' %}" method="post" class="newlisting">
         {% csrf_token %}
@@ -22,7 +24,7 @@
         {{form.start_bid}}
 
         <br>
-        
+
         <button type="submit" class="btn btn-outline-dark">Submit</button>
         
     </form>
