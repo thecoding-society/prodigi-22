@@ -1,11 +1,12 @@
 from django.contrib.auth import authenticate, login, logout
 from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.urls import reverse
 
-from .models import User
-
+from django.contrib.auth.decorators import login_required
+from .models import User, Listing, Bid, Comment, Watchlist
+from .forms import NewItem
 
 def index(request):
     return render(request, "auctions/index.html")
@@ -61,3 +62,9 @@ def register(request):
         return HttpResponseRedirect(reverse("index"))
     else:
         return render(request, "auctions/register.html")
+
+@login_required
+def new_listing(request):
+    form = NewItem()
+    print(form)
+    return render(request, "auctions/newlisting.html", {'form': form})

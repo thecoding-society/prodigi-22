@@ -12,9 +12,10 @@ class Listing(models.Model):
     id = models.AutoField(primary_key=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="owner")
     title = models.CharField(max_length=50)
-    desc = models.CharField(max_length=200, blank=True, null=True)
+    desc = models.TextField(max_length=200, blank=True, null=True)
     img = models.URLField(blank=True, null=True)
     category = models.CharField(max_length=50 ,blank=True, null=True)
+    start_bid = models.IntegerField()
     active_status = models.BooleanField(default=True)
     winner = models.ForeignKey(User, on_delete=models.SET_NULL, blank=True, null=True, related_name="bidwinner")
 
