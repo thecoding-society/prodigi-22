@@ -1,12 +1,7 @@
 from cProfile import label
 from django import forms
 from .models import User, Listing, Bid, Comment, Watchlist
-# class NewItem(forms.Form):
-#     title = forms.CharField(label='Title')
-#     desc =  forms.CharField(label='Description')
-#     img =  forms.CharField(label='Image URL')
-#     category = forms.CharField(label='Description')
-#     desc =  forms.CharField(label='Description')
+
 
 class NewItem(forms.ModelForm):
     
