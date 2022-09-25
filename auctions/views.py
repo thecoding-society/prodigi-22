@@ -8,6 +8,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from .models import User, Listing, Bid, Comment, Watchlist
 from .forms import NewItem
+from commerce.settings import LOGIN_REDIRECT_URL
 
 def index(request):
     return render(request, "auctions/index.html")
@@ -61,7 +62,8 @@ def register(request):
     else:
         return render(request, "auctions/register.html")
 
-@login_required
+
+@login_required(login_url=LOGIN_REDIRECT_URL)
 def new_listing(request):
 
     if request.method == 'POST':

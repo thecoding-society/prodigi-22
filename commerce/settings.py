@@ -123,3 +123,5 @@ STATIC_URL = '/static/'
 
 # added manually
 DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
+
+LOGIN_REDIRECT_URL = 'login'
