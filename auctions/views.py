@@ -65,6 +65,8 @@ def register(request):
 
 @login_required
 def new_listing(request):
+
+    if request.method == 'post':
+        return redirect('home')
     form = NewItem()
-    print(form)
     return render(request, "auctions/newlisting.html", {'form': form})
