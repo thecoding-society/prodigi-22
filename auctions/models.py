@@ -9,7 +9,7 @@ class User(AbstractUser):
 
 
 class Listing(models.Model):
-    id = models.IntegerField(primary_key=True)
+    id = models.AutoField(primary_key=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="owner")
     title = models.CharField(max_length=50)
     desc = models.CharField(max_length=200, blank=True, null=True)
@@ -20,7 +20,7 @@ class Listing(models.Model):
 
 
 class Bid(models.Model):
-    id = models.IntegerField(primary_key=True)
+    id = models.AutoField(primary_key=True)
     list_id = models.ForeignKey(Listing, on_delete=models.CASCADE, related_name="bids")
     user_id = models.ForeignKey(User, on_delete=models.SET_NULL, blank=True, null=True, related_name="biddings")
     amount = models.IntegerField()
@@ -28,12 +28,12 @@ class Bid(models.Model):
 
 
 class Comment(models.Model):
-    id = models.IntegerField(primary_key=True)
+    id = models.AutoField(primary_key=True)
     list_id = models.ForeignKey(Listing, on_delete=models.CASCADE, related_name="list_comments")
-    user_id = models.ForeignKey(Listing, on_delete=models.CASCADE, related_name="user_comments")
+    user_id = models.ForeignKey(User, on_delete=models.CASCADE, related_name="user_comments")
     comment = models.CharField(max_length=200)
 
 class Watchlist(models.Model):
-    id = models.IntegerField(primary_key=True)
+    id = models.AutoField(primary_key=True)
     list_id = models.ForeignKey(Listing, on_delete=models.CASCADE, related_name="watchlisted")
-    user_id = models.ForeignKey(Listing, on_delete=models.CASCADE, related_name="watchlist")
+    user_id = models.ForeignKey(User, on_delete=models.CASCADE, related_name="watchlist")
