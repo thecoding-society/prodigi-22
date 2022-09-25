@@ -1,11 +1,13 @@
 from django.contrib.auth import authenticate, login, logout
 from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.urls import reverse
 
-from .models import User
-
+from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+from .models import User, Listing, Bid, Comment, Watchlist
+from .forms import NewItem
 
 def index(request):
     return render(request, "auctions/index.html")
@@ -24,9 +26,8 @@ def login_view(request):
             login(request, user)
             return HttpResponseRedirect(reverse("index"))
         else:
-            return render(request, "auctions/login.html", {
-                "message": "Invalid username and/or password."
-            })
+            messages.error(request, 'Invalid username and/or password.')
+            return redirect('login')
     else:
         return render(request, "auctions/login.html")
 
@@ -45,19 +46,46 @@ def register(request):
         password = request.POST["password"]
         confirmation = request.POST["confirmation"]
         if password != confirmation:
-            return render(request, "auctions/register.html", {
-                "message": "Passwords must match."
-            })
+            messages.error(request, 'Passwords must match')
+            return redirect('register')
 
         # Attempt to create new user
         try:
             user = User.objects.create_user(username, email, password)
             user.save()
         except IntegrityError:
-            return render(request, "auctions/register.html", {
-                "message": "Username already taken."
-            })
+            messages.error(request, 'Username already taken.')
+            return redirect('register')
         login(request, user)
         return HttpResponseRedirect(reverse("index"))
     else:
         return render(request, "auctions/register.html")
+
+@login_required
+def new_listing(request):
+
+    if request.method == 'POST':
+        form = NewItem(request.POST)
+        if form.is_valid():
+            username = request.user.get_username()
+            user = User.objects.get(username=username) 
+
+            new = Listing(
+                user = user,
+                title = form.cleaned_data['title'],
+                desc = form.cleaned_data['desc'],
+                img = form.cleaned_data['img'],
+                category = form.cleaned_data['category'],
+                start_bid = form.cleaned_data['start_bid'],
+            )
+            new.save()
+
+            messages.success(request, 'Added listing successfully.')
+            return redirect('index')
+
+        
+        messages.error(request, 'Form not valid.')
+        return redirect('newlisting')            
+
+    form = NewItem()
+    return render(request, "auctions/newlisting.html", {'form': form})
