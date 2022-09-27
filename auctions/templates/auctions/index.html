@@ -29,12 +29,12 @@
                         Description: {{ listing.desc }}
                         <br>
                         Category: {{ listing.category }}
-
-                        BID : 
+                        <br>
+                         
                         {% if listing.bid.amount %}
-                            {{ listing.bid.amount }}
+                            BID (Highest): ${{ listing.bid.amount }}
                         {% else %}
-                            {{list.start_bid}}
+                            BID (Starting): ${{listing.start_bid}}
                         {% endif %}
                     </li>
                 </ul>
