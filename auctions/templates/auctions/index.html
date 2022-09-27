@@ -20,13 +20,22 @@
 
                     <li class="list-group-item-xxl" >
                         <h1>
-                        {{ listing.title }}
+                            {{ listing.title }}
                         </h1>
                         <br>
-                        
+                        <h2>
+                            {{ listing.price }}
+                        </h2>
                         Description: {{ listing.desc }}
                         <br>
                         Category: {{ listing.category }}
+
+                        BID : 
+                        {% if listing.bid.amount %}
+                            {{ listing.bid.amount }}
+                        {% else %}
+                            {{list.start_bid}}
+                        {% endif %}
                     </li>
                 </ul>
             </a>

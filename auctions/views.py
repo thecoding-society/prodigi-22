@@ -9,6 +9,9 @@ from django.contrib.auth.decorators import login_required
 from .models import User, Listing, Bid, Comment, Watchlist
 from .forms import NewItem
 from commerce.settings import LOGIN_REDIRECT_URL
+from django.db.models import Max
+
+
 
 def index(request):
     if request.user.is_authenticated:
@@ -16,8 +19,12 @@ def index(request):
 
     listings = Listing.objects.filter(active_status=True)
     for list in listings:
-        list.category =list.get_category_display()
-        print(list.category)
+        list.category = list.get_category_display()
+        
+        highest_amount_dict = list.bids.aggregate(Max('amount'))
+        highest_amount = highest_amount_dict['amount__max']
+        if highest_amount:
+            list.bid = list.bids.get(amount=highest_amount)
 
     return render(request, "auctions/index.html",{
         'listings':listings
