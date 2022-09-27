@@ -18,3 +18,14 @@ body {
     padding: 10px;
     padding-left: 0vh;
 }
+
+.list-group-horizontal{
+    width: 1000px;
+}
+.list-group{
+    width:1000px
+}
+.list-group-item-xxl{
+    padding: 20px;
+    padding-left: 40px;
+}

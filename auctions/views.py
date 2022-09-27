@@ -11,7 +11,15 @@ from .forms import NewItem
 from commerce.settings import LOGIN_REDIRECT_URL
 
 def index(request):
-    return render(request, "auctions/index.html")
+    if request.user.is_authenticated:
+        ...
+
+    listings = Listing.objects.filter(active_status=True)
+    
+
+    return render(request, "auctions/index.html",{
+        'listings':listings
+    })
 
 
 def login_view(request):
@@ -91,3 +99,5 @@ def new_listing(request):
 
     form = NewItem()
     return render(request, "auctions/newlisting.html", {'form': form})
+
+

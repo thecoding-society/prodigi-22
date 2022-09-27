@@ -1,7 +1,36 @@
 {% extends "auctions/layout.html" %}
 
+{% load static %}
+
 {% block body %}
     <h2>Active Listings</h2>
+    {% for listing in listings %}
+    
+    
+            <a class="list-group-item list-group-item-action" href='{% url 'index' %}'>
+                <ul class="list-group list-group-horizontal">
+                    {% if listing.img %}
+                    
+                    <li class="list-group-item">
+                        <img src='{{ listing.img }}' alt='{{ listing.img }}' height = '200px'>
+                    </li>
+                    {% else %}
+                        <img src='{% static 'auctions/blank.png' %}'>
+                    {% endif %}
 
-    TODO
+                    <li class="list-group-item-xxl" >
+                        <h1>
+                        {{ listing.title }}
+                        </h1>
+                        <br>
+                        
+                        Description: {{ listing.desc }}
+                        <br>
+                        Category: {{ listing.category }}
+                    </li>
+                </ul>
+            </a>
+        
+    
+    {% endfor %}
 {% endblock %}
