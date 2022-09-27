@@ -15,7 +15,9 @@ def index(request):
         ...
 
     listings = Listing.objects.filter(active_status=True)
-    
+    for list in listings:
+        list.category =list.get_category_display()
+        print(list.category)
 
     return render(request, "auctions/index.html",{
         'listings':listings
