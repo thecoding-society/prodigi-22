@@ -7,7 +7,7 @@
     {% for listing in listings %}
     
     
-            <a class="list-group-item list-group-item-action" href='{% url 'index' %}'>
+            <a class="list-group-item list-group-item-action" href='{% url 'listing' list_id=listing.id %}'>
                 <ul class="list-group list-group-horizontal">
                     {% comment %} Image {% endcomment %}
                     {% if listing.img %}

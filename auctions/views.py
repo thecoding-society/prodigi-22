@@ -140,12 +140,16 @@ def new_listing(request):
     }
     return render(request, "auctions/newlisting.html", context)
 
-def listing(request):
-
-
+def listing(request, list_id):
+    try:
+        listing = Listing.objects.get(pk=list_id)
+    except:
+        return redirect('not_found')
     context={
-        'a':'a'
+        'listing':listing
     }
     return render(request, "auctions/listing.html", context)
 
 
+def not_found(request):
+    return render(request, "auctions/notfound.html")
