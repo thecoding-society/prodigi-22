@@ -74,7 +74,7 @@ def login_view(request):
         username = request.POST["username"]
         password = request.POST["password"]
         user = authenticate(request, username=username, password=password)
-
+        print(username, password, user)
         # Check if authentication successful
         if user is not None:
             login(request, user)
@@ -190,10 +190,25 @@ def listing(request, list_id):
                 if bid_amount == None:
                     messages.error(request, 'Enter valid bid.')
                     return redirect('listing', list_id=list_id)
-
-                # place bid
                 
                 listing= Listing.objects.get(pk=list_id)
+                
+                # getting highest bid
+                highest_amount_dict = listing.bids.aggregate(Max('amount'))
+                highest_amount = highest_amount_dict['amount__max']
+
+
+                # check valid bid
+                if highest_amount:
+                    if int(highest_amount)>=int(bid_amount):
+                        messages.error(request, 'Bid must be higher than current bid.')
+                        return redirect('listing', list_id=list_id)
+                else:
+                    if int(listing.start_bid)>int(bid_amount):
+                        messages.error(request, 'Bid must be higher or equal to starting bid.')
+                        return redirect('listing', list_id=list_id)
+
+                # place bid
                 new_bid = Bid(
                     list_id=listing,
                     user_id=user,

@@ -6,7 +6,7 @@
     <h2>Listing: {{listing.title}}</h2>
 
     {% if listing.user.id == user.id %}
-        {% comment %} OWNER VIEW {% endcomment %}
+        <!-- OWNER VIEW -->
         {% if listing.img %}
             <li class="list-group-item">
                 <img src='{{ listing.img }}' alt='{{ listing.img }}' height = '200px'>
@@ -14,16 +14,30 @@
         {% else %}
                 <img src='{% static 'auctions/blank.png' %}'>
         {% endif %}
-
+        
+        
         <h2>
-            {% if listing.bid.amount %}
-                Current Bid: ${{ listing.bid.amount }}
-                <br>
+            {% if listing.active_status == True %}
+            <!-- if listing is active -->
+                {% if listing.bid.amount %}
+                    Current Bid: ${{ listing.bid.amount }}
+                    <br>
+                {% endif %}
+                Starting Bid: ${{ listing.start_bid }}
+            <!-- show winning bid and winner -->
+            {% else %}
+            Winning bid: ${{ listing.bid.amount }} by {{ listing.bid.user_id.username}}
             {% endif %}
-            Starting Bid: ${{ listing.start_bid }}
         </h2>
-        <p>{{count}} bids placed so far.</p>
 
+        <!-- no of bids -->
+        {% if listing.active_status == True %}
+            <p>{{count}} bids placed so far.</p>
+        {% else %}
+            <p>{{count}} bids was placed against starting bid of ${{ listing.start_bid }}.</p>
+        {% endif %}
+
+        <!-- details -->
         <h3>
             Description: {{listing.desc}}
         </h3>
@@ -32,37 +46,49 @@
             Details:
         </h2>
         <p>
-        Listed by: YOU
+        Listed by: {{listing.user.first_name}} (You)
         <br>
         Category: {{listing.category}}
         </p>
         
-        {% if listing.bid.amount %}
-            <p>The current bid is {{ listing.bid.amount|sub:listing.start_bid}} higher than the starting bid.
+        <!-- current bids and close listing-->
+        {% if listing.active_status == True %}
+            {% if listing.bid.amount %}
+                <p>The current bid is {{ listing.bid.amount|sub:listing.start_bid}} higher than the starting bid.
+            {% else %}
+                <p>No bids placed.</p>
+            {% endif %}
+
+
+            <form action="{% url 'listing' list_id=listing.id %}" method="post">
+                {% csrf_token %}
+                
+                <button type="submit" name="close" class="btn btn-primary">Close Listing</button>
+            </form>
+
         {% else %}
-            <p>No bids placed.</p>
+
+            <p>The listing has been closed by you.</p>
+
         {% endif %}
 
-
-        <form action="{% url 'listing' list_id=listing.id %}" method="post">
-            {% csrf_token %}
-            
-            <button type="submit" name="close" class="btn btn-primary">Close Listing</button>
-        </form>
+        
 
 
     {% else %}
-        {% comment %} USER VIEW {% endcomment %}
+        <!-- USER VIEW  -->
 
-        {% comment %} Watchlist {% endcomment %}
-        {% if user.is_authenticated %}
-        <form action="{% url 'listing' list_id=listing.id %}" method="post">
-            {% csrf_token %}
-            <button type="submit" name="watchlist" class="btn btn-primary">Watchlist</button>
-        </form>
+        <!--  Watchlist  -->
+        {% if listing.active_status == True %}
+            {% if user.is_authenticated %}
+            <form action="{% url 'listing' list_id=listing.id %}" method="post">
+                {% csrf_token %}
+                <button type="submit" name="watchlist" class="btn btn-primary">Watchlist</button>
+            </form>
+            {% endif %}
         {% endif %}
 
-        {% comment %} Image {% endcomment %}
+        <!-- Image -->
         {% if listing.img %}
             <li class="list-group-item">
                 <img src='{{ listing.img }}' alt='{{ listing.img }}' height = '200px'>
@@ -70,42 +96,59 @@
         {% else %}
                 <img src='{% static 'auctions/blank.png' %}'>
         {% endif %}
+        
 
-        <h2>
-            {% if listing.bid.amount %}
-                Current Bid: ${{ listing.bid.amount }}
-                <br>
-            {% endif %}
-            Starting Bid: ${{ listing.start_bid }}
-        </h2>
-        <p>{{count}} bids placed so far.</p>
-
-        {% if listing.bid.user_id.id == user.id %}
-            <p>Your bid is the current bid.</p>
-        {% elif not listing.bid.amount%}
-            <p>Place the starting bid.</p>
-        {% else %}
-            <p>Place bids to become the highest bidder.</p>
-        {% endif %}
-
-
-        {% if user.is_authenticated %}
-            <form action="{% url 'listing' list_id=listing.id %}" method="post">
-                {% csrf_token %}
-
+        {% if listing.active_status == True %}
+            <!-- current and starting bids -->
+            <h2>
                 {% if listing.bid.amount %}
-                    <input name="bid_amount" type="number" placeholder="Bid" min="{{listing.bid.amount|add:"1"}}" required>
-                {% else %}
-                    <input name="bid_amount" type="number" placeholder="Bid" min="{{listing.start_bid}}" required>
+                    Current Bid: ${{ listing.bid.amount }}
+                    <br>
                 {% endif %}
-                <button type="submit" name="bid" class="btn btn-primary">Place Bid</button>
-            </form>
+                Starting Bid: ${{ listing.start_bid }}
+            </h2>
+            <p>{{count}} bids placed so far.</p>
+
+
+            <!-- bid details -->
+            {% if listing.bid.user_id.id == user.id %}
+                <p>Your bid is the current bid.</p>
+            {% elif not listing.bid.amount%}
+                <p>Place the starting bid.</p>
+            {% else %}
+                <p>Place bids to become the highest bidder.</p>
+            {% endif %}
+
+            <!-- bidding -->
+            {% if user.is_authenticated %}
+                <form action="{% url 'listing' list_id=listing.id %}" method="post">
+                    {% csrf_token %}
+
+                    {% if listing.bid.amount %}
+                        <input name="bid_amount" type="number" placeholder="Bid" min="{{listing.bid.amount|add:"1"}}" required>
+                    {% else %}
+                        <input name="bid_amount" type="number" placeholder="Bid" min="{{listing.start_bid}}" required>
+                    {% endif %}
+                    <button type="submit" name="bid" class="btn btn-primary">Place Bid</button>
+                </form>
+            {% endif %}
+
+        {% else %}
+        
+            <h2>The listing is closed by the owner.</h2>
+    
+            {% if user.id == listing.bid.user_id.id %}
+                <p>You have won this bidding with bid of ${{ listing.bid.amount }}</p>
+            {% else %}
+                <p>Winning bid: ${{ listing.bid.amount }}</p>
+            {% endif %}
         {% endif %}
+        
 
 
 
 
-
+        <!-- details -->
 
         <h3>
             Description: {{listing.desc}}
