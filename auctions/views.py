@@ -237,6 +237,20 @@ def listing(request, list_id):
                 messages.success(request, 'Listing closed.')
                 return redirect('listing', list_id=list_id)
 
+            elif 'comment' in request.POST:
+                comment = request.POST.get('usercomment')
+                listing= Listing.objects.get(pk=list_id)
+                new_comment = Comment(
+                    list_id= listing,
+                    user_id = user,
+                    comment=comment
+                )
+                new_comment.save()
+                messages.success(request, 'Comment added')
+                return redirect('listing', list_id=list_id)
+
+
+
         # get listing
         try:
             listing = Listing.objects.get(pk=list_id)
@@ -255,14 +269,16 @@ def listing(request, list_id):
         
         
         # getting count of bids placed
-        
         count = listing.bids.count()
-        
+
+        # get comments
+        comments= listing.list_comments.all()
 
         context={
             'listing':listing,
             'count': count,
-            'user': user
+            'user': user,
+            'comments': comments,
         }
         return render(request, "auctions/listing.html", context)
 

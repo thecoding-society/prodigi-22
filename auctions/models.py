@@ -63,7 +63,7 @@ class Comment(models.Model):
     comment = models.CharField(max_length=200)
     
     def __str__(self):
-        return f'{self.id}: {self.list_id} - {self.user_id}'
+        return f'{self.comment}'
 
         
 class Watchlist(models.Model):
