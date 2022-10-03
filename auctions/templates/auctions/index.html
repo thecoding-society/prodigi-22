@@ -30,12 +30,22 @@
                         <br>
                         Category: {{ listing.category }}
                         <br>
-                         
+                        
                         {% if listing.bid.amount %}
                             BID (Highest): ${{ listing.bid.amount }}
                         {% else %}
                             BID (Starting): ${{listing.start_bid}}
                         {% endif %}
+                        {% if user.is_authenticated %}
+                            <form action="{% url 'index' %}" method="post">
+                                {% csrf_token %}
+                                <input name="list_id" value="{{listing.id}}" hidden>
+                                <button type="submit" class="btn btn-primary">Watchlist</button>
+                            </form>
+                    
+                        {% endif %}
+                        
+
                     </li>
                 </ul>
             </a>
