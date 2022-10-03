@@ -1,0 +1,30 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+
+    <h2>Listing: {{listing.title}}</h2>
+
+    {% comment %} Watchlist {% endcomment %}
+    {% if user.is_authenticated %}
+        <form action="{% url 'index' %}" method="post">
+            {% csrf_token %}
+            <input name="list_id" value="{{listing.id}}" hidden>
+            <button type="submit" class="btn btn-primary">Watchlist</button>
+        </form>
+    {% endif %}
+
+    {% comment %} Image {% endcomment %}
+    {% if listing.img %}
+        <li class="list-group-item">
+            <img src='{{ listing.img }}' alt='{{ listing.img }}' height = '200px'>
+        </li>
+    {% else %}
+            <img src='{% static 'auctions/blank.png' %}'>
+    {% endif %}
+
+    <h2>
+        {{ listing.price }}
+    </h2>
+    
+
+{% endblock %}

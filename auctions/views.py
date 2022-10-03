@@ -1,3 +1,4 @@
+from multiprocessing import context
 from django.contrib.auth import authenticate, login, logout
 from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect
@@ -54,10 +55,10 @@ def index(request):
         highest_amount = highest_amount_dict['amount__max']
         if highest_amount:
             list.bid = list.bids.get(amount=highest_amount)
-
-    return render(request, "auctions/index.html",{
+    context = {
         'listings':listings
-    })
+    }
+    return render(request, "auctions/index.html", context)
 
 
 def login_view(request):
@@ -134,8 +135,17 @@ def new_listing(request):
         
         messages.error(request, 'Form not valid.')
         return redirect('newlisting')            
+    context= {
+        'form': NewItem()
+    }
+    return render(request, "auctions/newlisting.html", context)
 
-    form = NewItem()
-    return render(request, "auctions/newlisting.html", {'form': form})
+def listing(request):
+
+
+    context={
+        'a':'a'
+    }
+    return render(request, "auctions/listing.html", context)
 
 
