@@ -1,30 +1,129 @@
 {% extends "auctions/layout.html" %}
 {% load static %}
+{% load mathfilters %}
 {% block body %}
 
     <h2>Listing: {{listing.title}}</h2>
 
-    {% comment %} Watchlist {% endcomment %}
-    {% if user.is_authenticated %}
-        <form action="{% url 'index' %}" method="post">
+    {% if listing.user.id == user.id %}
+        {% comment %} OWNER VIEW {% endcomment %}
+        {% if listing.img %}
+            <li class="list-group-item">
+                <img src='{{ listing.img }}' alt='{{ listing.img }}' height = '200px'>
+            </li>
+        {% else %}
+                <img src='{% static 'auctions/blank.png' %}'>
+        {% endif %}
+
+        <h2>
+            {% if listing.bid.amount %}
+                Current Bid: ${{ listing.bid.amount }}
+                <br>
+            {% endif %}
+            Starting Bid: ${{ listing.start_bid }}
+        </h2>
+        <p>{{count}} bids placed so far.</p>
+
+        <h3>
+            Description: {{listing.desc}}
+        </h3>
+
+        <h2>
+            Details:
+        </h2>
+        <p>
+        Listed by: YOU
+        <br>
+        Category: {{listing.category}}
+        </p>
+        
+        {% if listing.bid.amount %}
+            <p>The current bid is {{ listing.bid.amount|sub:listing.start_bid}} higher than the starting bid.
+        {% else %}
+            <p>No bids placed.</p>
+        {% endif %}
+
+
+        <form action="{% url 'listing' list_id=listing.id %}" method="post">
             {% csrf_token %}
-            <input name="list_id" value="{{listing.id}}" hidden>
-            <button type="submit" class="btn btn-primary">Watchlist</button>
+            
+            <button type="submit" name="close" class="btn btn-primary">Close Listing</button>
         </form>
-    {% endif %}
 
-    {% comment %} Image {% endcomment %}
-    {% if listing.img %}
-        <li class="list-group-item">
-            <img src='{{ listing.img }}' alt='{{ listing.img }}' height = '200px'>
-        </li>
+
     {% else %}
-            <img src='{% static 'auctions/blank.png' %}'>
+        {% comment %} USER VIEW {% endcomment %}
+
+        {% comment %} Watchlist {% endcomment %}
+        {% if user.is_authenticated %}
+        <form action="{% url 'listing' list_id=listing.id %}" method="post">
+            {% csrf_token %}
+            <button type="submit" name="watchlist" class="btn btn-primary">Watchlist</button>
+        </form>
+        {% endif %}
+
+        {% comment %} Image {% endcomment %}
+        {% if listing.img %}
+            <li class="list-group-item">
+                <img src='{{ listing.img }}' alt='{{ listing.img }}' height = '200px'>
+            </li>
+        {% else %}
+                <img src='{% static 'auctions/blank.png' %}'>
+        {% endif %}
+
+        <h2>
+            {% if listing.bid.amount %}
+                Current Bid: ${{ listing.bid.amount }}
+                <br>
+            {% endif %}
+            Starting Bid: ${{ listing.start_bid }}
+        </h2>
+        <p>{{count}} bids placed so far.</p>
+
+        {% if listing.bid.user_id.id == user.id %}
+            <p>Your bid is the current bid.</p>
+        {% elif not listing.bid.amount%}
+            <p>Place the starting bid.</p>
+        {% else %}
+            <p>Place bids to become the highest bidder.</p>
+        {% endif %}
+
+
+        {% if user.is_authenticated %}
+            <form action="{% url 'listing' list_id=listing.id %}" method="post">
+                {% csrf_token %}
+
+                {% if listing.bid.amount %}
+                    <input name="bid_amount" type="number" placeholder="Bid" min="{{listing.bid.amount|add:"1"}}" required>
+                {% else %}
+                    <input name="bid_amount" type="number" placeholder="Bid" min="{{listing.start_bid}}" required>
+                {% endif %}
+                <button type="submit" name="bid" class="btn btn-primary">Place Bid</button>
+            </form>
+        {% endif %}
+
+
+
+
+
+
+        <h3>
+            Description: {{listing.desc}}
+        </h3>
+
+        <h2>
+            Details:
+        </h2>
+        <p>
+        Listed by: {{listing.user.first_name}}
+        <br>
+        Category: {{listing.category}}
+        </p>
+
     {% endif %}
 
-    <h2>
-        {{ listing.price }}
-    </h2>
+
+
     
 
 {% endblock %}

@@ -32,14 +32,14 @@ class Listing(models.Model):
     ]
 
     id = models.AutoField(primary_key=True)
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="owner")
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="listings")
     title = models.CharField(max_length=50)
     desc = models.TextField(max_length=200, blank=True, null=True)
     img = models.URLField(blank=True, null=True)
     category = models.CharField(max_length=35, choices=CATEGORIES_CHOICES, blank=True, null=True)
     start_bid = models.IntegerField()
     active_status = models.BooleanField(default=True)
-    winner = models.ForeignKey(User, on_delete=models.SET_NULL, blank=True, null=True, related_name="bidwinner")
+    winner = models.ForeignKey(User, on_delete=models.SET_NULL, blank=True, null=True, related_name="bids_won")
 
     def __str__(self):
         return f'{self.title}'

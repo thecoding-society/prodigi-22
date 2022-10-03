@@ -25,7 +25,11 @@ def index(request):
             uname = request.user.get_username()
 
             user= User.objects.get(username=uname)
-            listing = Listing.objects.get(pk=list_id)
+            try:
+                listing = Listing.objects.get(pk=list_id)
+            except:
+                messages.error(request, 'Something went wrong, try again.')
+                return redirect('listing', list_id=list_id)
         
             # check if listing already in watchlist
             watchlistings = user.watchlist.all()
@@ -47,6 +51,8 @@ def index(request):
 
     # list the active listing in index
     listings = Listing.objects.filter(active_status=True)
+
+    # getting category
     for list in listings:
         list.category = list.get_category_display()
         
@@ -140,15 +146,110 @@ def new_listing(request):
     }
     return render(request, "auctions/newlisting.html", context)
 
+
+@login_required(login_url=LOGIN_REDIRECT_URL)
 def listing(request, list_id):
-    try:
-        listing = Listing.objects.get(pk=list_id)
-    except:
-        return redirect('not_found')
-    context={
-        'listing':listing
-    }
-    return render(request, "auctions/listing.html", context)
+    
+    if request.user.is_authenticated:
+        uname = request.user.get_username()
+        user= User.objects.get(username=uname)
+        if request.method == 'POST':
+
+            # adding listing to watchlist
+            if 'watchlist' in request.POST:
+                if list_id == None:
+                    messages.error(request, 'Something went wrong, try again.')
+                    return redirect('listing', list_id=list_id)
+                
+                try:
+                    listing = Listing.objects.get(pk=list_id)
+                except:
+                    messages.error(request, 'Something went wrong, try again.')
+                    return redirect('listing', list_id=list_id)
+                # check if listing already in watchlist
+                watchlistings = user.watchlist.all()
+
+                for watchlisting in watchlistings:
+                    if int(watchlisting.list_id.id) == int(list_id):
+                        messages.error(request, 'Listing already watchlisted.')
+                        return redirect('listing', list_id=list_id)
+
+                
+                # creating watchlist
+                watchlisting = Watchlist(
+                    user_id=user,
+                    list_id=listing,
+                )
+                watchlisting.save()
+                messages.success(request, 'Listing watchlisted.')
+                return redirect('listing', list_id=list_id)
+
+            elif 'bid' in request.POST:
+                # get bid
+                bid_amount = request.POST.get('bid_amount')
+                if bid_amount == None:
+                    messages.error(request, 'Enter valid bid.')
+                    return redirect('listing', list_id=list_id)
+
+                # place bid
+                
+                listing= Listing.objects.get(pk=list_id)
+                new_bid = Bid(
+                    list_id=listing,
+                    user_id=user,
+                    amount=bid_amount,
+                )
+                new_bid.save()
+
+                messages.success(request, 'Bid placed.')
+                return redirect('listing', list_id=list_id)
+
+            elif 'close' in request.POST:
+                listing= Listing.objects.get(pk=list_id)
+                if user.id != listing.user.id:
+                    messages.error(request, 'Only owners can close the listing.')
+                    return redirect('listing', list_id=list_id)
+
+                # getting highest bid
+                highest_amount_dict = listing.bids.aggregate(Max('amount'))
+                highest_amount = highest_amount_dict['amount__max']
+                if highest_amount:
+                    highest_bid = listing.bids.get(amount=highest_amount)
+                
+                listing.active_status= False
+                listing.winner = highest_bid.user_id
+                listing.save()
+                messages.success(request, 'Listing closed.')
+                return redirect('listing', list_id=list_id)
+
+        # get listing
+        try:
+            listing = Listing.objects.get(pk=list_id)
+        except:
+            return redirect('not_found')
+
+
+        # getting human readable category
+        listing.category = listing.get_category_display()
+        
+        # getting highest bid
+        highest_amount_dict = listing.bids.aggregate(Max('amount'))
+        highest_amount = highest_amount_dict['amount__max']
+        if highest_amount:
+            listing.bid = listing.bids.get(amount=highest_amount)
+        
+        
+        # getting count of bids placed
+        
+        count = listing.bids.count()
+        
+
+        context={
+            'listing':listing,
+            'count': count,
+            'user': user
+        }
+        return render(request, "auctions/listing.html", context)
 
 
 def not_found(request):
