@@ -91,3 +91,11 @@ p{
     margin-right: auto;
     padding-top: 5px;
 }
+
+/* add listing */
+.form_spacing{
+    padding-left: 50px;
+}
+.newlisting{
+    padding-top: 5px;
+}
