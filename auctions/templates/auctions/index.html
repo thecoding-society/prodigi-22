@@ -6,7 +6,7 @@
 <div class="spacing">
     <h2>Active Listings</h2>
     <br>
-    
+
     {% for listing in listings %}
     
             <a class="list-group-item list-group-item-action" href="{% url 'listing' list_id=listing.id %}"">
@@ -14,9 +14,7 @@
                     {% comment %} Image {% endcomment %}
                     <div class="image_spacing">
                         {% if listing.img %}
-                            <!-- <li class="list-group-item"> -->
                                 <img src='{{ listing.img }}' alt='{{ listing.img }}' height = '200px' class = "image">
-                            <!-- </li> -->
                         {% else %}
                             <img src="{% static 'auctions/blank.png' %}" alt='no image' height = '200px' class = "image">
                         {% endif %}
