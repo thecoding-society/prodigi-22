@@ -67,6 +67,10 @@ def index(request):
     return render(request, "auctions/index.html", context)
 
 
+def not_found(request):
+    return render(request, "auctions/notfound.html")
+
+
 def login_view(request):
     if request.method == "POST":
 
@@ -283,5 +287,21 @@ def listing(request, list_id):
         return render(request, "auctions/listing.html", context)
 
 
-def not_found(request):
-    return render(request, "auctions/notfound.html")
+@login_required(login_url=LOGIN_REDIRECT_URL)
+def watchlist(request):
+    username = request.user.get_username()
+    user = User.objects.get(username=username) 
+
+    listings=user.watchlist.all()
+    for listing in listings:
+         # getting highest bid
+        highest_amount_dict = listing.list_id.bids.aggregate(Max('amount'))
+        highest_amount = highest_amount_dict['amount__max']
+        if highest_amount:
+            listing.list_id.bid = listing.list_id.bids.get(amount=highest_amount)
+
+    context= {
+        'listings': listings
+    }
+
+    return render(request, "auctions/watchlist.html", context)
