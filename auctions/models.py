@@ -28,7 +28,6 @@ class Listing(models.Model):
         ('antiques','Antiques'),
         ('computers','Computers/Tablets & Networking'),
         ('others', 'Others')
-        
     ]
 
     id = models.AutoField(primary_key=True)

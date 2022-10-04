@@ -1,0 +1,47 @@
+{% extends "auctions/layout.html" %}
+
+{% load static %}
+
+{% block body %}
+    <h2>Active Listings in {{ category }}</h2>
+    {% for listing in listings %}
+            <a class="list-group-item list-group-item-action" href='{% url 'listing' list_id=listing.id %}'>
+                <ul class="list-group list-group-horizontal">
+                    {% comment %} Image {% endcomment %}
+                    {% if listing.img %}
+                        <li class="list-group-item">
+                            <img src='{{ listing.img }}' alt='{{ listing.img }}' height = '200px'>
+                        </li>
+                    {% else %}
+                        <img src='{% static 'auctions/blank.png' %}'>
+                    {% endif %}
+
+                    <li class="list-group-item-xxl" >
+                        <h1>
+                            {{ listing.title }}
+                        </h1>
+                        <br>
+                        <h3>
+                            Description: {{ listing.desc }}
+                        </h3>
+                        
+                        <br>
+                        <h5>Category: {{ listing.category }}</h5>
+                        <br>
+                        
+                        {% if listing.bid.amount %}
+                            <h5>Current Bid: ${{ listing.bid.amount}}</h5>
+                        {% endif %}
+                        <h5>Starting Bid: ${{listing.start_bid}}</h5>
+                        
+                        <br>
+                        
+                    </li>
+                </ul>
+            </a>
+    {% empty %}
+
+        There is no active listing in this category.
+
+    {% endfor %}
+{% endblock %}

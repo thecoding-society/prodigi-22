@@ -305,3 +305,29 @@ def watchlist(request):
     }
 
     return render(request, "auctions/watchlist.html", context)
+
+
+def category(request):
+
+    # category_db = [c[0] for c in Listing.category.field.choices]
+    # print(category)
+
+    categories=Listing.category.field.choices
+
+    context={
+        'categories':categories
+    }
+    return render(request, "auctions/category.html", context)
+
+
+def category_type(request,cat):
+    listings = Listing.objects.filter(category=cat, active_status= True).all()
+    
+    # getting human readable category
+    category = [c[1] for c in Listing.category.field.choices if c[0]==cat][0]
+
+    context={
+        'listings':listings,
+        'category': category
+    }
+    return render(request, "auctions/category_listing.html", context)
