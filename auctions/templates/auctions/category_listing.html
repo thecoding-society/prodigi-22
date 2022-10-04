@@ -3,40 +3,40 @@
 {% load static %}
 
 {% block body %}
+<div class="spacing">
     <h2>Active Listings in {{ category }}</h2>
+    <br>
+
     {% for listing in listings %}
+
             <a class="list-group-item list-group-item-action" href='{% url 'listing' list_id=listing.id %}'>
                 <ul class="list-group list-group-horizontal">
                     {% comment %} Image {% endcomment %}
-                    {% if listing.img %}
-                        <li class="list-group-item">
-                            <img src='{{ listing.img }}' alt='{{ listing.img }}' height = '200px'>
-                        </li>
-                    {% else %}
-                        <img src='{% static 'auctions/blank.png' %}'>
-                    {% endif %}
-
+                    <div class="image_spacing">
+                        {% if listing.img %}
+                            <!-- <li class="list-group-item"> -->
+                                <img src='{{ listing.img }}' alt='{{ listing.img }}' height = '200px' class = "cat_image">
+                            <!-- </li> -->
+                        {% else %}
+                            <img src="{% static 'auctions/blank.png' %}" alt='no image' height = '200px' class = "cat_image">
+                        {% endif %}
+                    </div>
                     <li class="list-group-item-xxl" >
                         <h1>
                             {{ listing.title }}
                         </h1>
-                        <br>
-                        <h3>
-                            Description: {{ listing.desc }}
-                        </h3>
-                        
-                        <br>
-                        <h5>Category: {{ listing.category }}</h5>
-                        <br>
-                        
+                        <p>
+                            Description: {{ listing.desc }}<br>
+                            Category: {{ listing.category }}<br>
                         {% if listing.bid.amount %}
-                            <h5>Current Bid: ${{ listing.bid.amount}}</h5>
+                            Current Bid: ${{ listing.bid.amount}}<br>
                         {% endif %}
-                        <h5>Starting Bid: ${{listing.start_bid}}</h5>
+                            Starting Bid: ${{listing.start_bid}}<br>
                         
-                        <br>
-                        
+                        </p>
+
                     </li>
+                    
                 </ul>
             </a>
     {% empty %}
@@ -44,4 +44,5 @@
         There is no active listing in this category.
 
     {% endfor %}
+</div>
 {% endblock %}

@@ -30,7 +30,7 @@ body {
 }
 
 .image_spacing{
-    padding-top: 30px;
+    padding: 20px;
     width:30%;
     height:30%;
     
@@ -80,8 +80,14 @@ p{
 }
 .row {
     display: flex;
-  }
+}
   
-  .column {
+.column {
     flex: 50%;
-  }
+}
+.cat_image{
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    padding-top: 5px;
+}
