@@ -16,17 +16,9 @@
         <link href="https://fonts.googleapis.com/css2?family=Barlow+Semi+Condensed:ital,wght@0,400;0,500;1,200&display=swap" rel="stylesheet">
     </head>
     <body>
-        <h1>Auctions</h1>
-        <div>
-            {% if user.is_authenticated %}
-                Signed in as <strong>{{ user.username }}</strong>.
-            {% else %}
-                Not signed in.
-            {% endif %}
-        </div>
-        <ul class="nav">
+        
+            <!-- navbar -->
             {% include 'auctions/navbar.html' %}
-        </ul>
         <hr>
         <div class= 'messages'>
             {% for message in messages %}
