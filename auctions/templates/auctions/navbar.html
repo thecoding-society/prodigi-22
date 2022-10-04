@@ -2,10 +2,11 @@
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <!-- Container wrapper -->
     <div class="container">
-      <!-- Navbar brand -->
-      <h3>Autions&nbsp;&nbsp;&nbsp;</h3>
-      </a>
-  
+      <div class="navbrand">
+        <!-- Navbar brand -->
+        <h3>Autions</h3>
+      </div>
+      
       <!-- Toggle button -->
       <button
         class="navbar-toggler"
@@ -38,8 +39,8 @@
                 </li>
             {% endif %}
         </ul>
-        <!-- Left links -->
-  
+        
+        <!-- Right links -->
         <div class="d-flex align-items-center">
             
                 {% if user.is_authenticated %}

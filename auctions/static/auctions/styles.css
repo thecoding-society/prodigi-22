@@ -30,6 +30,7 @@ body {
 }
 
 .image_spacing{
+    padding-top: 30px;
     width:30%;
     height:30%;
     
@@ -38,6 +39,7 @@ body {
     display: block;
     margin-left: auto;
     margin-right: auto;
+    padding-top: 10px;
     
 }
 ul {
@@ -63,3 +65,23 @@ p{
     font-size: larger;
     line-height: 150%;
 }
+
+/* navbar */
+.navbrand{
+    padding-right: 3%;
+}
+
+
+/* categories */
+
+.cat-list{
+    width:80%;
+    font-size: larger;
+}
+.row {
+    display: flex;
+  }
+  
+  .column {
+    flex: 50%;
+  }

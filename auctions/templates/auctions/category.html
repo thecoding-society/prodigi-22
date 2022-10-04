@@ -3,11 +3,26 @@
 {% load static %}
 
 {% block body %}
-    <h2>Categories</h2>
-
-    <ul class="list-group">
-        {% for category in categories %}
-            <a class="list-group-item list-group-item-action" href="{% url 'category_type' cat=category.0 %}">{{ category.1 }}</a>
-        {% endfor %}
+    <div class="spacing">
+        <h2>Categories</h2>
+        <br>
+        <div class="row">
+            <div class="column">
+                <ul class="list-group cat-list">
+                    {% for category in categories|slice:'1:10' %}
+                        <a class="list-group-item list-group-item-action" href="{% url 'category_type' cat=category.0 %}">{{ category.1 }}</a>
+                    {% endfor %}
+                </ul>
+            </div>
+            <div class="column">
+                <ul class="list-group cat-list">
+                    {% for category in categories|slice:'10:' %}
+                        <a class="list-group-item list-group-item-action" href="{% url 'category_type' cat=category.0 %}">{{ category.1 }}</a>
+                    {% endfor %}
+                </ul>
+            </div>
+          </div>
+        
+    </div>
 
 {% endblock %}

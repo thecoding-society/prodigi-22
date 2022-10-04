@@ -17,14 +17,17 @@
     </head>
     <body>
         
-            <!-- navbar -->
-            {% include 'auctions/navbar.html' %}
-        <hr>
+        <!-- navbar -->
+        {% include 'auctions/navbar.html' %}
+        
+        <!-- messages -->
         <div class= 'messages'>
             {% for message in messages %}
                 {{message}}
             {% endfor %}
         </div>
+
+        
         {% block body %}
         {% endblock %}
     </body>
