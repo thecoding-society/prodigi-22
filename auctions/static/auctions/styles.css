@@ -99,3 +99,8 @@ p{
 .newlisting{
     padding-top: 5px;
 }
+
+/* messages */
+.alert{
+    text-align: center;
+}
