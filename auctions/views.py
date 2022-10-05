@@ -15,40 +15,7 @@ from django.db.models import Max
 
 
 def index(request):
-    if request.user.is_authenticated:
-        # adding listing to watchlist
-        if request.method == 'POST':
-            list_id = request.POST.get('list_id')
-            if list_id == None:
-                messages.error(request, 'Something went wrong, try again.')
-                return redirect('index')
-            uname = request.user.get_username()
-
-            user= User.objects.get(username=uname)
-            try:
-                listing = Listing.objects.get(pk=list_id)
-            except:
-                messages.error(request, 'Something went wrong, try again.')
-                return redirect('listing', list_id=list_id)
-        
-            # check if listing already in watchlist
-            watchlistings = user.watchlist.all()
-
-            for watchlisting in watchlistings:
-                if int(watchlisting.list_id.id) == int(list_id):
-                    messages.error(request, 'Listing already watchlisted.')
-                    return redirect('index')
-
-            
-            # creating watchlist
-            watchlisting = Watchlist(
-                user_id=user,
-                list_id=listing,
-            )
-            watchlisting.save()
-            messages.success(request, 'Listing watchlisted.')
-            return redirect('index')
-
+    
     # list the active listing in index
     listings = Listing.objects.filter(active_status=True)
 

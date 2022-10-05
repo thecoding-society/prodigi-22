@@ -32,15 +32,7 @@
                             Current Bid: ${{ listing.bid.amount}}<br>
                         {% endif %}
                             Starting Bid: ${{listing.start_bid}}<br>
-                        <!-- Watchlist -->
-                        {% if user.is_authenticated %}
-                            <form action="{% url 'index' %}" method="post">
-                                {% csrf_token %}
-                                <input name="list_id" value="{{listing.id}}" hidden>
-                                <button type="submit" class="btn btn-primary">Watchlist</button>
-                            </form>
-                    
-                        {% endif %}
+                        
                         </p>
 
                     </li>
