@@ -120,29 +120,32 @@ p{
 }
 
 .desc{
+    font-family: 'Barlow Semi Condensed', sans-serif;
     font-weight: 500;
     
     padding-top: 2%;
-    font-size:1.6rem;
+    font-size:1.8rem;
 }
-
+.desc p{
+    font-weight: 400;
+}
 .bids{
     font-size: 1.4rem;
 }
 .bids p{
-    font-weight: 300;
+    font-weight: 400;
     margin-bottom: 0.4rem;
 }
 .noofbids{
     font-family: 'Barlow Semi Condensed', sans-serif;
-    font-size: 1.2rem;
+    font-size: 1.6rem;
     line-height: 100%;
     margin-bottom: 0rem;
-    font-weight: 100;
+    font-weight: 300;
 }
 
 .bidform{
-    padding: 30px 0;
+    padding: 20px 0;
 }
 
 .bidform .form-control{
@@ -153,6 +156,14 @@ p{
 .bidform .btn{
     height: 100%;
 }
-.details{
-    font-size: 1.2rem;
+.details p{
+    font-size: 1.4rem;
+    font-weight: 300;
+}
+
+.container{
+    padding-left: 0;
+}
+.mb-0{
+    font-weight: 400;
 }
