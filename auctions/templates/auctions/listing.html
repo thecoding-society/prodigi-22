@@ -2,56 +2,68 @@
 {% load static %}
 {% load mathfilters %}
 {% block body %}
+<div class="listing_spacing">
+    <!-- title -->
+    <div class="title">
+        <p>{{listing.title}}</p> 
+    </div>
 
-    <h2>Listing: {{listing.title}}</h2>
+    <!-- Image -->
+    {% if listing.img %}
+        <img src='{{ listing.img }}' alt='{{ listing.img }}' height = '400px'>
+    {% endif %}
 
-    <!-- ///////////////////////// OWNER VIEW \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\  -->
-    
-    {% if listing.user.id == user.id %}
-        <!-- OWNER VIEW -->
-        {% if listing.img %}
-            <li class="list-group-item">
-                <img src='{{ listing.img }}' alt='{{ listing.img }}' height = '200px'>
-            </li>
-        {% else %}
-                <img src='{% static 'auctions/blank.png' %}'>
-        {% endif %}
+    <!-- desc -->
+    <div class="desc">
+        <span class="list_head">Description:</span> 
+        <p>{{listing.desc}}</p>
+    </div>
         
-        
-        <h2>
-            {% if listing.active_status == True %}
+    <!-- bids -->
+    <div class="bids">
+        {% if listing.active_status == True %}
             <!-- if listing is active -->
-                {% if listing.bid.amount %}
-                    Current Bid: ${{ listing.bid.amount }}
-                    <br>
-                {% endif %}
-                Starting Bid: ${{ listing.start_bid }}
-            <!-- show winning bid and winner -->
-            {% else %}
-            Winning bid: ${{ listing.bid.amount }} by {{ listing.bid.user_id.username}}
+            {% if listing.bid.amount %}
+                <p>Current Bid: ${{ listing.bid.amount }}&nbsp; 
+                
             {% endif %}
-        </h2>
+                |&nbsp;&nbsp;Starting Bid: ${{ listing.start_bid }}</p>
+                <!-- no of bids -->
+                
+                <span class="noofbids">{{count}} bids placed so far.</span>
+        {% endif %}
+    </div>
+    
+
+    
+
+    {% if listing.user.id == user.id %}
+        <!-- ///////////////////////// OWNER VIEW \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\  -->
+
+        <div class="bids">
+            <!-- show winning bid and winner -->
+            {% if listing.active_status == False %}
+                <p>Winning bid: ${{ listing.bid.amount }} by {{ listing.bid.user_id.username}}</p> 
+            {% endif %}
+        </div>
+        
 
         <!-- no of bids -->
-        {% if listing.active_status == True %}
-            <p>{{count}} bids placed so far.</p>
-        {% else %}
+        {% if listing.active_status == False %}
             <p>{{count}} bids was placed against starting bid of ${{ listing.start_bid }}.</p>
         {% endif %}
 
         <!-- details -->
-        <h3>
-            Description: {{listing.desc}}
-        </h3>
+        
 
-        <h2>
-            Details:
-        </h2>
-        <p>
-        Listed by: {{listing.user.first_name}} (You)
-        <br>
-        Category: {{listing.category}}
-        </p>
+        <div class="details">
+            <p>
+                Listed by: {{listing.user.first_name}} (You)
+            <br>
+                Category: {{listing.category}}
+            </p>
+        </div>
+        
         
         <!-- current bids and close listing-->
         {% if listing.active_status == True %}
@@ -146,65 +158,54 @@
 
 
         
-<!-- ///////////////////////// USER VIEW \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\  -->
+
 
     {% else %}
-        <!-- USER VIEW  -->
+    <!-- ///////////////////////// USER VIEW \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\  -->
 
-        <!--  Watchlist  -->
-        {% if listing.active_status == True %}
-            {% if user.is_authenticated %}
-            <form action="{% url 'listing' list_id=listing.id %}" method="post">
-                {% csrf_token %}
-                <button type="submit" name="watchlist" class="btn btn-primary">Watchlist</button>
-            </form>
-            {% endif %}
-        {% endif %}
-
-        <!-- Image -->
-        {% if listing.img %}
-            <li class="list-group-item">
-                <img src='{{ listing.img }}' alt='{{ listing.img }}' height = '200px'>
-            </li>
-        {% else %}
-                <img src='{% static 'auctions/blank.png' %}'>
-        {% endif %}
         
 
+
         {% if listing.active_status == True %}
-            <!-- current and starting bids -->
-            <h2>
-                {% if listing.bid.amount %}
-                    Current Bid: ${{ listing.bid.amount }}
-                    <br>
+            <div class="bids">
+                <!-- bid details -->
+                {% if listing.bid.user_id.id == user.id %}
+                    <span class="noofbids">Your bid is the current bid.</span>
+                {% elif not listing.bid.amount%}
+                    <span class="noofbids">Place the starting bid.</span>
+                {% else %}
+                    <span class="noofbids">Place bids to become the highest bidder.</span>
                 {% endif %}
-                Starting Bid: ${{ listing.start_bid }}
-            </h2>
-            <p>{{count}} bids placed so far.</p>
-
-
-            <!-- bid details -->
-            {% if listing.bid.user_id.id == user.id %}
-                <p>Your bid is the current bid.</p>
-            {% elif not listing.bid.amount%}
-                <p>Place the starting bid.</p>
-            {% else %}
-                <p>Place bids to become the highest bidder.</p>
-            {% endif %}
+            </div>
+            
 
             <!-- bidding -->
-            {% if user.is_authenticated %}
-                <form action="{% url 'listing' list_id=listing.id %}" method="post">
+            <div class="bidform">
+                {% if user.is_authenticated %}
+                <form class="row g-3 bidform" action="{% url 'listing' list_id=listing.id %}" method="post">
                     {% csrf_token %}
-
-                    {% if listing.bid.amount %}
-                        <input name="bid_amount" type="number" placeholder="Bid" min="{{listing.bid.amount|add:"1"}}" required>
-                    {% else %}
-                        <input name="bid_amount" type="number" placeholder="Bid" min="{{listing.start_bid}}" required>
+                    <div class="col-auto">
+                    
+                        {% if listing.bid.amount %}
+                            <input class="form-control" name="bid_amount" type="number" placeholder="Bid" min="{{listing.bid.amount|add:'1'}}" required>
+                        {% else %}
+                            <input class="form-control" name="bid_amount" type="number" placeholder="Bid" min="{{listing.start_bid}}" required>
+                        {% endif %}
+                    </div>
+                    <div class="col-auto">
+                        <button type="submit" name="bid" class="btn btn-success">Place Bid</button>
+                    </div>
+                    {% if listing.active_status == True %}
+                    <div class="col-auto">
+                        <button type="submit" name="watchlist" class="btn btn-primary"formnovalidate >Watchlist</button>
+                    </div>
                     {% endif %}
-                    <button type="submit" name="bid" class="btn btn-primary">Place Bid</button>
                 </form>
-            {% endif %}
+                {% endif %}
+            </div>
+            
+
+            
 
         {% else %}
         
@@ -223,18 +224,16 @@
 
         <!-- details -->
 
-        <h3>
-            Description: {{listing.desc}}
-        </h3>
+        
 
-        <h2>
-            Details:
-        </h2>
-        <p>
-        Listed by: {{listing.user.first_name}}
-        <br>
-        Category: {{listing.category}}
-        </p>
+        <div class="details">
+            <p>
+                Listed by: {{listing.user.first_name}}
+                <br>
+                Category: {{listing.category}}
+            </p>
+        </div>
+        
 
     
 
@@ -310,6 +309,6 @@
 
     {% endif %}
 
-    
+    </div>
 
 {% endblock %}
