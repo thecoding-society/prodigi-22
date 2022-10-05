@@ -159,7 +159,7 @@ def listing(request, list_id):
         user= User.objects.get(username=uname)
         if request.method == 'POST':
 
-            # adding listing to watchlist
+            # adding/remove listing to watchlist
             if 'watchlist' in request.POST:
                 if list_id == None:
                     messages.error(request, 'Something went wrong, try again.')
@@ -170,12 +170,15 @@ def listing(request, list_id):
                 except:
                     messages.error(request, 'Something went wrong, try again.')
                     return redirect('listing', list_id=list_id)
+
                 # check if listing already in watchlist
                 watchlistings = user.watchlist.all()
 
                 for watchlisting in watchlistings:
                     if int(watchlisting.list_id.id) == int(list_id):
-                        messages.error(request, 'Listing already watchlisted.')
+                        # if in watchlist remove from watchlist
+                        watchlisting.delete()
+                        messages.success(request, 'Listing remove from watchlist.')
                         return redirect('listing', list_id=list_id)
 
                 
@@ -229,6 +232,13 @@ def listing(request, list_id):
                     messages.error(request, 'Only owners can close the listing.')
                     return redirect('listing', list_id=list_id)
 
+                # remove listing from all watchlists
+
+                watchlistings= listing.watchlisted.all()
+                for watchlisting in watchlistings:
+                    watchlisting.delete()
+
+
                 # getting highest bid
                 highest_amount_dict = listing.bids.aggregate(Max('amount'))
                 highest_amount = highest_amount_dict['amount__max']
@@ -261,7 +271,13 @@ def listing(request, list_id):
         except:
             return redirect('not_found')
 
-
+        # check if watchlisted
+        try:
+            if Watchlist.objects.get(list_id=listing, user_id=user):
+                watchlisted=True
+        except:
+            watchlisted=False
+        
         # getting human readable category
         listing.category = listing.get_category_display()
         
@@ -283,6 +299,7 @@ def listing(request, list_id):
             'count': count,
             'user': user,
             'comments': comments,
+            'watchlisted':watchlisted,
         }
         return render(request, "auctions/listing.html", context)
 

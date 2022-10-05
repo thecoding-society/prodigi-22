@@ -132,7 +132,12 @@
                     </div>
                     {% if listing.active_status == True %}
                     <div class="col-auto">
-                        <button type="submit" name="watchlist" class="btn btn-primary"formnovalidate >Watchlist</button>
+                        {% if watchlisted == False %}
+                            <button type="submit" name="watchlist" class="btn btn-primary"formnovalidate >Watchlist</button>
+                        {% else %}
+                            <button type="submit" name="watchlist" class="btn btn-primary"formnovalidate >Remove from Watchlist</button>
+                        {% endif %}
+                        
                     </div>
                     {% endif %}
                 </form>
