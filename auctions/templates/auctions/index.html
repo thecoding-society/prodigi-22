@@ -3,39 +3,36 @@
 {% load static %}
 
 {% block body %}
+<div class="spacing">
     <h2>Active Listings</h2>
+    <br>
+
     {% for listing in listings %}
     
-    
-            <a class="list-group-item list-group-item-action" href='{% url 'listing' list_id=listing.id %}'>
+            <a class="list-group-item list-group-item-action" href="{% url 'listing' list_id=listing.id %}"">
                 <ul class="list-group list-group-horizontal">
                     {% comment %} Image {% endcomment %}
-                    {% if listing.img %}
-                        <li class="list-group-item">
-                            <img src='{{ listing.img }}' alt='{{ listing.img }}' height = '200px'>
-                        </li>
-                    {% else %}
-                        <img src='{% static 'auctions/blank.png' %}'>
-                    {% endif %}
+                    <div class="image_spacing">
+                        {% if listing.img %}
+                                <img src='{{ listing.img }}' alt='{{ listing.img }}' height = '200px' class = "image">
+                        {% else %}
+                            <img src="{% static 'auctions/blank.png' %}" alt='no image' height = '200px' class = "image">
+                        {% endif %}
+                    </div>
+                    
 
                     <li class="list-group-item-xxl" >
                         <h1>
                             {{ listing.title }}
                         </h1>
-                        <br>
-                        <h3>
-                            Description: {{ listing.desc }}
-                        </h3>
-                        
-                        <br>
-                        <h5>Category: {{ listing.category }}</h5>
-                        <br>
-                        
+                        <p>
+                            Description: {{ listing.desc }}<br>
+                            Category: {{ listing.category }}<br>
                         {% if listing.bid.amount %}
-                            <h5>Current Bid: ${{ listing.bid.amount}}</h5>
+                            Current Bid: ${{ listing.bid.amount}}<br>
                         {% endif %}
-                        <h5>Starting Bid: ${{listing.start_bid}}</h5>
-                        {% comment %} Watchlist {% endcomment %}
+                            Starting Bid: ${{listing.start_bid}}<br>
+                        <!-- Watchlist -->
                         {% if user.is_authenticated %}
                             <form action="{% url 'index' %}" method="post">
                                 {% csrf_token %}
@@ -44,12 +41,14 @@
                             </form>
                     
                         {% endif %}
-                        
+                        </p>
 
                     </li>
                 </ul>
             </a>
         
+        
     
     {% endfor %}
+</div>
 {% endblock %}
